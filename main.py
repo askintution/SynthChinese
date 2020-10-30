@@ -4,7 +4,7 @@
 """
 
 import argparse
-from synth.basic_corpus import get_corpus
+from synth.corpus.basic_corpus import get_corpus
 from synth.synth_pipeline import Pipeline
 
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # 获取语料
     corpus_generators = get_corpus(cfg)
     # 合成
-    synthPipe = Pipeline(cfg, arg_dict.target_dir, arg_dict.label_file, arg_dict.label_sep, display_interval=1)
+    synthPipe = Pipeline(cfg, arg_dict.target_dir, arg_dict.label_file, arg_dict.label_sep, display_interval=2000)
     for corp in corpus_generators:
         print(f'Start with {corp}')
         synthPipe(corpus_generators[corp], corp[0].upper())

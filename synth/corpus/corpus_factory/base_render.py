@@ -174,6 +174,7 @@ class BaseRender(object):
             return self.get_sample()
         return word
 
+    @abstractmethod
     def generate(self, size):
         for _ in range(size):
             yield self.get_sample()

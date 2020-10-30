@@ -1,14 +1,14 @@
 TEXT:
     SAMPLE:
-        SAMPLE_SIZE: {'corpus': 200,'date': 10,'number': 10,'sub_address': 10,'id': 10,'eng_char': 10}
+        SAMPLE_SIZE: {'corpus': 200,'date': 10,'number': 10,'sub_address': 10,'id': 10,'eng_char': 10}  # 数量（万）
         WORD_LENGTH: [12, 12]   # 字符长度
         CHAR_SET: 'data/chars/chn.txt'        # 字符集文件
         CHAR_MAX_AMOUNT: 100000   #  字符最大使用次数，达到后停用
         CHAR_MIN_AMOUNT: 200    # 字符最小使用次数，不足时补充
     CORPUS:
         CORPUS_DIR: 'data/corpus'  # 语料目录
-        CORPUS_TYPE: {'sogou_news.txt': 'article', 'address.txt': 'list'}   # 语料类型，不指定时默认为article
-        CORPUS_WEIGHT: {"The Hitchhiker's Guide to the Galaxy.txt": 0.9, 'books.txt': 0.1}    # 语料权重，不指定时默认相同
+        CORPUS_TYPE: {'黄金时代.txt': 'article', 'address.txt': 'list'}   # 语料类型，不指定时默认为article
+        CORPUS_WEIGHT: {"黄金时代.txt": 0.6, 'address.txt': 0.4}    # 语料权重，不指定时默认相同
 
 BACKGROUND:
     DIR: 'data/background'  # 背景目录

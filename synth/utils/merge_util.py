@@ -189,31 +189,10 @@ class MergeUtil(object):
 
 if __name__ == '__main__':
     import yaml
-    import matplotlib
-    import matplotlib.pyplot as plt
-    from synth.utils.font_util import FontUtil
-    from synth.utils.cv_util import cvUtil
-    from synth.libs.bg_factory import bgFactory
 
-    cfg = yaml.load(open('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/configs/test.yaml', encoding='utf-8'),
-                    Loader=yaml.FullLoader)
-
-    font_util = FontUtil(cfg)
-    cv_util = cvUtil(cfg)
-    # a = cv_util.test(font_util, '安立路319号', '/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/samples')
-    text = '安立路319号'
-    font_str, img = font_util(text)
-    cv_str, img = cv_util(img)
-
+    cfg = yaml.load(open('../../configs/base.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
 
     merge_util = MergeUtil(cfg)
     merge_util.play()
-    #final = merge_util(img,  bg_img)
-    # plt.figure(font_str + cv_str)
-    # plt.imshow(final, cmap='gray')
-    # plt.savefig(os.path.join(font_str+cv_str + '.jpeg'))
-    # cv2.imwrite('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/samples/1.jpg', final)
-    # cv2.imshow('a', final)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+
 

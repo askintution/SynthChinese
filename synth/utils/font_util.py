@@ -191,15 +191,8 @@ class FontUtil(object):
 
 if __name__ == '__main__':
     import yaml
-    import matplotlib
-    import matplotlib.pyplot as plt
 
-    cfg = yaml.load(open('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/configs/base.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
+    cfg = yaml.load(open('../../configs/base.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
+    cfg['EFFECT']['PYGAME']['FONTS']['fonts_dir'] = '../../data/fonts'
     FU = FontUtil(cfg)
-    # font_info, arr = FU('我们')
-    # print(font_info)
-    # plt.figure(1)
-    # plt.imshow(255 - arr, cmap='gray')
-    # plt.show()
-    # FU.test('总层数abc123', '/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/samples')
     FU.play(3)

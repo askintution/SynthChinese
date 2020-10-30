@@ -61,11 +61,5 @@ class bgFactory:
 
 
 if __name__ == '__main__':
-    bgf = bgFactory('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/data/bg')
-    import matplotlib
-    import matplotlib.pyplot as plt
-
-    bg_name, bg_img = bgf.getnerate_bg()
-    # plt.imshow(bg_img, cmap='gray')
-    # plt.show()
+    bgf = bgFactory('../../data/background')
     bgf.play()

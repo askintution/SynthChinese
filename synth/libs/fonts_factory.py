@@ -98,5 +98,5 @@ class FontsFactory:
 
 
 if __name__ == '__main__':
-    ff = FontsFactory('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/data/fonts/chn')
+    ff = FontsFactory('../../data/fonts')
     print(ff.generate_font('我们'))

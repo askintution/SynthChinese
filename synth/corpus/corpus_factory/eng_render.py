@@ -1,5 +1,5 @@
 import random
-from synth.corpus_factory.base_render import BaseRender
+from synth.corpus.corpus_factory.base_render import BaseRender
 
 
 class EngRender(BaseRender):

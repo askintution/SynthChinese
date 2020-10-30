@@ -3,12 +3,12 @@
 @author zhangjian
 """
 from collections import OrderedDict
-from synth.corpus_factory.base_render import BaseRender
-from synth.corpus_factory.date_render import DateRender
-from synth.corpus_factory.eng_render import EngRender
-from synth.corpus_factory.id_render import IDRender
-from synth.corpus_factory.number_render import NumberRender
-from synth.corpus_factory.subaddr_render import SubAddrRender
+from synth.corpus.corpus_factory.base_render import BaseRender
+from synth.corpus.corpus_factory.date_render import DateRender
+from synth.corpus.corpus_factory.eng_render import EngRender
+from synth.corpus.corpus_factory.id_render import IDRender
+from synth.corpus.corpus_factory.number_render import NumberRender
+from synth.corpus.corpus_factory.subaddr_render import SubAddrRender
 
 
 def get_corpus(cfg):
@@ -39,7 +39,7 @@ def get_corpus(cfg):
 
     all_generators = OrderedDict()
     for render_name in all_renders:
-        amount = sample_size[render_name]
+        amount = sample_size[render_name] * 10000
         all_generators[render_name] = all_renders[render_name].generate(amount)
     return all_generators
 

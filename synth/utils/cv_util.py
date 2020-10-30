@@ -133,7 +133,7 @@ class cvUtil(object):
         return cv_str, img
 
     def play(self, FPS=5):
-        img = cv2.imread('./demo_img/font22simsun_oblique0_rotation0_strong0_wide0_strength0.03_underline11.44_fringe0-0.jpg', cv2.IMREAD_GRAYSCALE)
+        img = cv2.imread('./demo_img/font_img_1.jpg', cv2.IMREAD_GRAYSCALE)
         while True:
             cv_name, cv_img = self.__call__(img)
             cv2.namedWindow('Play', 0)
@@ -189,20 +189,7 @@ class cvUtil(object):
 
 if __name__ == '__main__':
     import yaml
-    import matplotlib
-    import matplotlib.pyplot as plt
-    from synth.utils.font_util import FontUtil
 
-    cfg = yaml.load(open('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/configs/base.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
-    font_util = FontUtil(cfg)
+    cfg = yaml.load(open('../../configs/base.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
     cv_util = cvUtil(cfg)
-
-    # text = '安立路319号'
-    # font_str, img = font_util(text)
-    # cv_str, img = cv_util(img)
-    # plt.figure(font_str+cv_str)
-    # plt.imshow(255 - img, cmap='gray')
-    # # plt.savefig(os.path.join(font_str+cv_str + '.jpeg'))
-    # plt.show()
-    # a = cv_util.test(font_util, '安立路319号', '/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/samples')
     cv_util.play()
