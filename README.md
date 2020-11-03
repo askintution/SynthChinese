@@ -7,6 +7,7 @@
 |(./demo/5.jpg)|(./demo/6.jpg)|
 |(./demo/7.jpg)|(./demo/8.jpg)|
 
+## 2.安装
 git clone  https://github.com/Placeboooo/SynthChinese.git
 pip install requirements.txt
 ## 3.配置
@@ -24,6 +25,7 @@ pip install requirements.txt
 python main.py
 结果：/samples/
 日志：/log/
+
 ## 5.功能
 ### 1.语料工厂（corpus_factory）: 提供文本语料
 ### 2.font_util：根据字体文件将文本语料渲染成文字图像
