@@ -27,7 +27,7 @@
 
 
 ## 2.安装
-git clone  https://github.com/Placeboooo/SynthChinese.git
+git clone  https://github.com/Placeboooo/SynthChinese.git  
 pip install requirements.txt
 ## 3.配置
 <p>
