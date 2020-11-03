@@ -2,8 +2,11 @@
 语料合成 for OCR：根据文本语料，合成图像语料
 
 ## 1.结果示例
+|(./demo/1.jpg)|(./demo/2.jpg)|
+|(./demo/3.jpg)|(./demo/4.jpg)|
+|(./demo/5.jpg)|(./demo/6.jpg)|
+|(./demo/7.jpg)|(./demo/8.jpg)|
 
-## 2.安装
 git clone  https://github.com/Placeboooo/SynthChinese.git
 pip install requirements.txt
 ## 3.配置
