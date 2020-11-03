@@ -10,6 +10,21 @@
 ![6.jpg](./demo/6.jpg)
 ![7.jpg](./demo/7.jpg)
 ![8.jpg](./demo/8.jpg)
+### 效果列表
+|效果名称|模块|备注|
+|--------|-----|-------|
+|oblique|font_util|倾斜|
+|rotation|font_util|旋转|
+|strong|font_util|加粗|
+|wide|font_util|加宽|
+|underline|font_util|下划线|
+|box|cv_util|加外框|
+|perspective|cv_util|透视变换|
+|blur|cv_util|高斯模糊|
+|filter|cv_util|emboss或sharp滤波|
+|reverse|merge_util|反转颜色|
+|noise|merge_util|噪点（4中类型）|
+
 
 ## 2.安装
 git clone  https://github.com/Placeboooo/SynthChinese.git
