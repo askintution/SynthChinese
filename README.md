@@ -8,7 +8,7 @@ git clone  https://github.com/Placeboooo/SynthChinese.git
 pip install requirements.txt
 ## 3.配置
 见/configs/base.yaml
-其中
+其中:
   -TEXT：文本语料相关
     -SAMPLE: 控制样本规模、文本长度、字符集等
     -CORPUS：语料目录及语料类型、权重
