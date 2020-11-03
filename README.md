@@ -46,9 +46,9 @@ pip install requirements.txt
 <p>
       
 ## 4.运行
-python main.py
-结果：/samples/
-日志：/log/
+python main.py  
+结果：/samples/  
+日志：/log/  
 
 ## 5.功能
 ### 1.语料工厂（corpus_factory）: 提供文本语料
