@@ -11,7 +11,7 @@
 ![7.jpg](./demo/7.jpg)
 ![8.jpg](./demo/8.jpg)
 ### 效果列表
-|效果名称|模块|备注|
+|效果名称|所在模块|备注|
 |--------|-----|-------|
 |oblique|font_util|倾斜|
 |rotation|font_util|旋转|
