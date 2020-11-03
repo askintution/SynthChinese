@@ -20,14 +20,14 @@ pip install requirements.txt
   
   
 其中:  
--TEXT：文本语料相关
-  -SAMPLE: 控制样本规模、文本长度、字符集等  
-  -CORPUS：语料目录及语料类型、权重  
+-TEXT：文本语料相关  
+---SAMPLE: 控制样本规模、文本长度、字符集等  
+---CORPUS：语料目录及语料类型、权重  
 -BACKGROUND：背景相关，控制背景目录，及最终语料图片的size  
 -EFFECT：效果控制  
-  -PYGAME：控制字体及其style，作用于【font_util】  
-  -OPENCV: 控制透视变换、外框、模糊、噪点等，作用于【cv_util】  
-  -MERGE: 控制文字图像与背景的融合，作用于【merge_util】
+---PYGAME：控制字体及其style，作用于【font_util】  
+---OPENCV: 控制透视变换、外框、模糊、噪点等，作用于【cv_util】  
+---MERGE: 控制文字图像与背景的融合，作用于【merge_util】
 <p>
       
 ## 4.运行
