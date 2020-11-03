@@ -84,20 +84,11 @@ class FontUtil(object):
             surf = pygame.Surface((rect.width, size), pygame.locals.SRCALPHA, 32)
             font.render_to(surf, (0, int((size-rect.height)/2)), text)
 
-        if random.random() < self.font_style_cfg['fringe']:
-            # fringe within 2 pixes
-            h = random.uniform(0, 2)
-            w = random.uniform(0, 2)
-            font.render_to(surf, (h, w), text)
-        else:
-            h = 0
-            w = 0
-
         arr = pygame.surfarray.pixels_alpha(surf).swapaxes(0, 1)  # 获取图像的透明度（当render_to只传fgcolor背景就是透明的，值为0）
 
         # str
         font_name_str = os.path.splitext(font_name)[0]
-        font_string = f'font{size}{font_name_str}_oblique{int(font.oblique)}_rotation{font.rotation}_strong{int(font.strong)}_wide{int(font.wide)}_strength{round(font.strength,2)}_underline{int(font.underline)}{font.underline_adjustment}_fringe{round(h,1)}-{round(w,1)}'
+        font_string = f'font{size}{font_name_str}_oblique{int(font.oblique)}_rotation{font.rotation}_strong{int(font.strong)}_wide{int(font.wide)}_strength{round(font.strength,2)}_underline{int(font.underline)}{font.underline_adjustment}'
 
         return font_string, arr
 

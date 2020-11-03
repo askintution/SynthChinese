@@ -4,7 +4,7 @@
 """
 
 import argparse
-from synth.corpus.basic_corpus import get_corpus
+from synth.corpus.base_corpus_factory import get_corpus
 from synth.synth_pipeline import Pipeline
 
 

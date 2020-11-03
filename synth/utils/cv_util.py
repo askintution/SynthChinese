@@ -102,7 +102,7 @@ class cvUtil(object):
         # box
         if random.random() < self.open_cv_conf['BOX']:
             img = self.draw_box(img)
-            cv_str += '_box'
+            cv_str += 'box'
         # warp
         if random.random() < self.open_cv_conf['PERSPECTIVE']:
             X = get_random_value(*self.open_cv_conf['PERSPECTIVE_X'])

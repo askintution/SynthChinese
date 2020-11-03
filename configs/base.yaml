@@ -54,7 +54,6 @@ EFFECT:
             wide: 0.01  # 加宽
             strength: [0, 0.1, 'uniform']  # 加粗/加宽的幅度
             underline: [0.1, [0, 2, 'uniform']]  # 下划线
-            fringe: 0   # 模糊
 
     OPENCV:
         BOX: 0.1    # 为文字加外边框
