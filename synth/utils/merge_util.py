@@ -23,10 +23,6 @@ class MergeUtil(object):
         """
         # resize
         h, w = font_img.shape[:2]
-        if h < 10:  # 因对“-”等符号的高度过小
-            text_mask = np.pad(font_img, ((10 - h, 10 - h), (0, 0)), 'constant')
-            h, w = text_mask.shape[:2]
-
         resize_h = bg_shape[0] - int(random.uniform(2, self.merge_cfg['max_height_diff']))  # 比背景少2到n个像素
         resize_w = np.clip(int(w * resize_h / float(h)), 1, bg_shape[1])  # 按比例缩放，最大不能超过bg_w
         font_img = cv2.resize(font_img, (resize_w, resize_h), interpolation=cv2.INTER_CUBIC)

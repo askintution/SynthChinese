@@ -78,9 +78,11 @@ class FontUtil(object):
                 font.underline_adjustment = adj_factor
 
         # render to surface
-        rect = font.get_rect(text)
-        surf = pygame.Surface((rect.width, rect.height), pygame.locals.SRCALPHA, 32)
-        font.render_to(surf, (0, 0), text)
+        surf, rect = font.render(text)
+        if rect.height <= (size * 0.6):
+            # height too small like '-', use size as height
+            surf = pygame.Surface((rect.width, size), pygame.locals.SRCALPHA, 32)
+            font.render_to(surf, (0, int((size-rect.height)/2)), text)
 
         if random.random() < self.font_style_cfg['fringe']:
             # fringe within 2 pixes
@@ -104,7 +106,7 @@ class FontUtil(object):
 
     def play(self, FPS=5):
         import cv2
-        text = '安立路319号Abcdefg'
+        text = '一'
 
         while True:
             font_str, font_img = self.__call__(text)

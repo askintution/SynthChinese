@@ -3733,3 +3733,6 @@
 [2020-10-30 15:35:25,778-synth-INFO]-synth_pipeline.py-__call__-88-Num: 00003371 image has been generated.
 [2020-10-30 15:35:25,794-synth-INFO]-synth_pipeline.py-__call__-88-Num: 00003372 image has been generated.
 [2020-10-30 15:56:21,424-synth-INFO]-synth_pipeline.py-_init_img_dir-47-A new train images directory has been generated: samples/2020_10_30_001
+[2020-10-30 16:19:04,870-synth-INFO]-synth_pipeline.py-_init_img_dir-47-A new train images directory has been generated: samples/2020_10_30_001
+[2020-10-30 16:44:21,316-synth-INFO]-synth_pipeline.py-_init_img_dir-47-A new train images directory has been generated: samples/2020_10_30_002
+[2020-10-30 16:44:21,317-synth-INFO]-synth_pipeline.py-check_filename-60-samples/Img_label_001.txt has existed, a new log file samples/Img_label_001_2.txt has been created.

@@ -45,6 +45,7 @@ class Pipeline:
                 img_dir = os.path.join(self.target_dir, tmp_dirname)
                 os.makedirs(img_dir)
                 logger.info('A new train images directory has been generated: {}'.format(self.target_dir + '/' + tmp_dirname))
+                self.img_dir_short = tmp_dirname
                 return img_dir
 
     def check_filename(self, file_name):
@@ -65,7 +66,7 @@ class Pipeline:
         # save img
         cv2.imwrite(os.path.join(self.img_dir, f_name), img)
         # save label
-        self.label_cache += f'{f_name}{self.label_sep}{text}\n'
+        self.label_cache += f'{self.img_dir_short}/{f_name}{self.label_sep}{text}\n'
         if len(self.label_cache) > 10000:
             with open(self.label_file, mode='a+') as f:
                 f.write(self.label_cache)
