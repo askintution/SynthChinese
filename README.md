@@ -1,5 +1,5 @@
 # SynthChinese
-语料合成 for OCR：根据文本语料合成图像语料
+OCR语料合成：根据文本语料合成图像语料
 
 ## 1.结果示例
 ![1.jpg](./demo/1.jpg)
