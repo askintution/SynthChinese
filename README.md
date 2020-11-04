@@ -22,8 +22,10 @@ OCR语料合成：根据文本语料合成图像语料
 |perspective|cv_util|透视变换|
 |blur|cv_util|高斯模糊|
 |filter|cv_util|emboss或sharp滤波|
+|crop|merge_util|背景随机剪裁|
+|color|merge_util|随机调整亮度和对比度|
 |reverse|merge_util|反转颜色|
-|noise|merge_util|噪点（4中类型）|
+|noise|merge_util|噪点（4种类型）|
 
 
 ## 2.安装
