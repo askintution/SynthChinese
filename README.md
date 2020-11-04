@@ -13,6 +13,7 @@ OCR语料合成：根据文本语料合成图像语料
 ### 效果列表（非全部）
 |效果名称|所在模块|备注|
 |--------|-----|-------|
+|font|font_util|随机选择字体|
 |oblique|font_util|倾斜|
 |rotation|font_util|旋转|
 |strong|font_util|加粗|
