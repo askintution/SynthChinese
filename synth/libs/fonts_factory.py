@@ -8,6 +8,7 @@ import random
 import traceback
 from copy import deepcopy
 from fontTools.ttLib import TTCollection, TTFont
+from synth.logger.synth_logger import logger
 
 
 class FontsFactory:
@@ -66,7 +67,7 @@ class FontsFactory:
                     chars_set.add(char)
         except:
             chars_set = {}
-            print(font_path+traceback.format_exc())
+            logger.exception('')
 
         return chars_set
 
@@ -79,7 +80,7 @@ class FontsFactory:
                     if char not in self.fonts_dict[font_name][1]:
                         supported_fonts.pop(font_name)
                 else:
-                    print('No such font in target dir: {}'.format(font_name))
+                    logger.error('No such font in target dir: {}'.format(font_name))
         return supported_fonts
 
     def generate_font(self, text):

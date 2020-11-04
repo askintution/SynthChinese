@@ -2,6 +2,7 @@ import random
 import glob
 import os
 from abc import abstractmethod
+from synth.logger.synth_logger import logger
 
 
 class BaseRender(object):
@@ -60,7 +61,7 @@ class BaseRender(object):
         Load charset file
         """
         if not os.path.exists(filepath):
-            print("Chars file not exists.")
+            logger.error("Chars file not exists.")
             exit(1)
 
         ret = ' '
@@ -76,10 +77,10 @@ class BaseRender(object):
         """
         load paths of corpus
         """
-        print(f"Loading corpus from: {self.corpus_dir}")
+        logger.info(f"Loading corpus from: {self.corpus_dir}")
         self.corpus_path = glob.glob(self.corpus_dir + '/**/*.txt', recursive=True)
         if len(self.corpus_path) == 0:
-            print("Corpus not found.")
+            logger.error("Corpus not found.")
             exit(-1)
 
     def gen_words_from_corpus(self, corpus_file_name, corpus_type):
@@ -118,7 +119,7 @@ class BaseRender(object):
         if self.corpus_dir:
             self.load_corpus_path()
             self.corpus = {}
-            print(f'Weight of corpus:{self.corpus_weight}')
+            logger.info(f'Weight of corpus:{self.corpus_weight}')
             for corpus_file_name in self.corpus_path:
                 corpus_short_name = os.path.split(corpus_file_name)[1]
 
@@ -137,13 +138,13 @@ class BaseRender(object):
                         generator = self.gen_words_from_corpus(corpus_file_name, corpus_type)
                         self.corpus[corpus_short_name] = {'corpus': generator,
                                                           'weight': weight}
-                        print(f'Weight of corpus:{corpus_short_name}: {weight}')
+                        logger.info(f'Weight of corpus:{corpus_short_name}: {weight}')
                     else:
-                        print(f'Weight of corpus:{corpus_short_name}, not setted! use 0')
+                        logger.info(f'Weight of corpus:{corpus_short_name}, not setted! use 0')
 
                 else:
                     weight = 0.01
-                    print(f'Weight of corpus:{corpus_short_name}, not setted! use 0.01')
+                    logger.info(f'Weight of corpus:{corpus_short_name}, not setted! use 0.01')
                     self.corpus[corpus_short_name] = {'corpus': self.gen_words_from_corpus(corpus_file_name, corpus_type),
                                                       'weight': weight}
         else:
@@ -170,7 +171,7 @@ class BaseRender(object):
             word = next(self.corpus[corpus_short_name]['corpus'])
         except StopIteration:
             self.corpus.pop(corpus_short_name)
-            print(f'{corpus_short_name}: is exhausted！')
+            logger.info(f'{corpus_short_name}: is exhausted！')
             return self.get_sample()
         return word
 

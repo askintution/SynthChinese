@@ -97,7 +97,7 @@ class FontUtil(object):
 
     def play(self, FPS=5):
         import cv2
-        text = '一'
+        text = '安立路319号abcDEF'
 
         while True:
             font_str, font_img = self.__call__(text)

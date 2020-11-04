@@ -3,8 +3,11 @@
 @author zhangjian
 
 """
-
+import os
 from synth.logger.logger_util import Logger
+
+
+log_path = os.path.dirname(os.path.abspath(__file__)) + "../../../log"
 
 args = {'when': 'D',
         'interval': 1,
@@ -13,4 +16,4 @@ args = {'when': 'D',
         'level': Logger.INFO,  # 日志level
         }
 
-logger = Logger('synth', 'log', 'synth_chinese', **args)
+logger = Logger('synth', log_path, 'synth_chinese', **args)

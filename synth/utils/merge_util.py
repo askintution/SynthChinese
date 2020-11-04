@@ -8,6 +8,7 @@ import numpy as np
 from synth.libs.bg_factory import bgFactory
 from synth.libs.poisson_reconstruct import blit_images
 from synth.libs.math_util import get_random_value
+from synth.logger.synth_logger import logger
 
 
 class MergeUtil(object):
@@ -158,7 +159,7 @@ class MergeUtil(object):
             elif noise_type == 'poisson':
                 final_img = self.apply_poisson_noise(merged_img)
             else:
-                print(f'NOISE TYPE ERROR:{noise_type}')
+                logger.error(f'NOISE TYPE ERROR:{noise_type}')
                 final_img = merged_img
             bg_name += f'_{noise_type}'
 
