@@ -46,11 +46,12 @@ class cvUtil(object):
         """
         先将图片pad为原尺寸的4/3，画框，再resize回原尺寸
         """
+        assert alpha >= 1
         h, w = img.shape
         dst_h, dst_w = int(h * alpha), int(w * alpha)
-        top = random.randint(1, dst_h - h - 1)
+        top = random.randint(0, dst_h - h)
         bottom = dst_h - h - top
-        left = random.randint(1, dst_w - w - 1)
+        left = random.randint(0, dst_w - w)
         right = dst_w - w - left
         img_new = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT,
                                      value=0)  # top,bottom,left,right
@@ -144,6 +145,22 @@ class cvUtil(object):
                 break
         cv2.destroyAllWindows()
 
+    def test_blur(self):
+        img = cv2.imread('./demo_img/font_img_1.jpg', cv2.IMREAD_GRAYSCALE)
+        for ksize in (1,3,5):
+            for sigma in (0, 0.5, 1.5, 1, 3,5, 7):
+                new = self.gauss_blur(img, ksize, sigma)
+                cv2.imwrite(f'../../samples/test_blur/ksize{ksize}_sigma{round(sigma,1)}.jpg', new)
+        print('done')
+
+    def test_perspective(self):
+        img = cv2.imread('./demo_img/font_img_1.jpg', cv2.IMREAD_GRAYSCALE)
+        for x in (0, 15):
+            for y in (0, 15):
+                for z in (0, 3):
+                    new = self.warpPerspectiveTransform(img, x, y, z)
+                    cv2.imwrite(f'../../samples/test_blur/x{x}y{y}z{z}.jpg', new)
+
     def test(self, font_util, test_text, target_dir):
 
         import matplotlib
@@ -168,7 +185,7 @@ class cvUtil(object):
         plt.savefig(os.path.join(target_dir, font_string + 'box_warp.jpeg'))
         print(arr.shape)
         # blur
-        arr = self.gauss_blur(arr, 3, 7)
+        arr = self.gauss_blur(arr, 3, 5)
         plt.figure(font_string + 'blur')
         plt.imshow(255 - arr, cmap='gray')
         plt.savefig(os.path.join(target_dir, font_string + 'box_warp_blur.jpeg'))

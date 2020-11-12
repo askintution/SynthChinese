@@ -15,15 +15,7 @@ class BaseRender(object):
 
     """
 
-    def __init__(self, chars_file,
-                 corpus_dir=None,
-                 corpus_type_dict=None,
-                 corpus_weight_dict=None,
-                 char_max_amount=None,
-                 char_min_amount=200,
-                 length=None,
-
-                 mode="infinite"):
+    def __init__(self, chars_file, cfg=None):
         """
         :param chars: List of charset
         :param corpus_dir: Path of corpus
@@ -38,23 +30,19 @@ class BaseRender(object):
         for c in self.chars:
             self.stastics[c] = 0
 
-        self.corpus_dir = corpus_dir
+        if cfg:
+            self.char_max_amount = cfg['SAMPLE']['CHAR_MAX_AMOUNT']
+            self.char_max_sub_str = cfg['SAMPLE']['CHAR_MAX_SUBSTR']
+            self.char_min_amount = cfg['SAMPLE']['CHAR_MIN_AMOUNT']
+            self.length = cfg['SAMPLE']['WORD_LENGTH']
+            self.insert_blank = cfg['SAMPLE']['INSERT_BLANK_PROB']
 
-        if char_max_amount:
-            self.char_max_amount = char_max_amount
-        else:
-            self.char_max_amount = float('inf')
+            self.corpus_dir = cfg['CORPUS']['CORPUS_DIR']
+            self.corpus_type = cfg['CORPUS']['CORPUS_TYPE']
+            self.corpus_weight = cfg['CORPUS']['CORPUS_WEIGHT']
+            self.infinite = cfg['CORPUS']['INFINITE']
 
-        self.char_min_amount = char_min_amount
-        if isinstance(length, list):
-            self.length = length
-        else:
-            self.length = [1, 12]
-
-        self.corpus_type = corpus_type_dict
-        self.corpus_weight = corpus_weight_dict
-        self.mode = mode
-        self.load()
+            self.load()
 
     def load_chars(self, filepath):
         """
@@ -96,10 +84,17 @@ class BaseRender(object):
                     if cache:
                         char = cache[0]
                         cache = cache[1:]
-                        if (char in self.chars) and (self.stastics[char] < self.char_max_amount):
-                            words += char
-                            self.stastics[char] += 1
+                        if char in self.chars:
+                            if self.stastics[char] < self.char_max_amount:
+                                words += char
+                                self.stastics[char] += 1
+                            else:
+                                words += self.char_max_sub_str
                         if len(words) == nchar:
+                            # randomly insert blank
+                            if nchar < self.length[1]:
+                                if random.random() < self.insert_blank:
+                                    words = self.randomly_insert_blank(words)
                             yield words
                             break  # genrate next word
 
@@ -119,7 +114,7 @@ class BaseRender(object):
         if self.corpus_dir:
             self.load_corpus_path()
             self.corpus = {}
-            logger.info(f'Weight of corpus:{self.corpus_weight}')
+            # logger.info(f'Weight of corpus:{self.corpus_weight}')
             for corpus_file_name in self.corpus_path:
                 corpus_short_name = os.path.split(corpus_file_name)[1]
 
@@ -157,7 +152,7 @@ class BaseRender(object):
         """
         if not self.corpus:
             # all corpus exhausted
-            if self.mode == 'infinite':
+            if self.infinite:
                 # reload
                 self.load()
             else:
@@ -181,6 +176,16 @@ class BaseRender(object):
             yield self.get_sample()
         for text in self.supply_uncommon():
             yield text
+
+    def randomly_insert_blank(self, word):
+        length_of_word = len(word)
+        insert_blank_num = self.length[1]-length_of_word
+        list_word = list(word)
+        for _ in range(insert_blank_num):
+            position = random.choice(range(1, len(list_word)))
+            list_word.insert(position, ' ')
+        return ''.join(list_word)
+
 
     def supply_uncommon(self):
         """

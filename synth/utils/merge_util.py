@@ -5,6 +5,7 @@
 import cv2
 import random
 import numpy as np
+from copy import deepcopy
 from synth.libs.bg_factory import bgFactory
 from synth.libs.poisson_reconstruct import blit_images
 from synth.libs.math_util import get_random_value
@@ -18,6 +19,8 @@ class MergeUtil(object):
         self.merge_cfg = cfg['EFFECT']['MERGE']
         self.bg_factory = bgFactory(cfg['BACKGROUND']['DIR'], *cfg['BACKGROUND']['SIZE'])
 
+        self.rgb = self.merge_cfg['RGB']
+
     def random_pad(self, font_img, bg_shape):
         """
         pad font image to same size with background image
@@ -27,22 +30,16 @@ class MergeUtil(object):
         resize_h = bg_shape[0] - int(random.uniform(2, self.merge_cfg['max_height_diff']))  # 比背景少2到n个像素
         resize_w = np.clip(int(w * resize_h / float(h)), 1, bg_shape[1])  # 按比例缩放，最大不能超过bg_w
         font_img = cv2.resize(font_img, (resize_w, resize_h), interpolation=cv2.INTER_CUBIC)
+        if font_img.ndim < 3:
+            font_img = np.expand_dims(font_img, 2)
         # random pad
         h, w = font_img.shape[:2]
         top_padding = int(random.uniform(0, bg_shape[0] - h))
         left_padding = int(random.uniform(0, bg_shape[1] - w))
-        down_padding = bg_shape[0] - (top_padding + h)
-        right_padding = bg_shape[1] - (left_padding + w)
-        text_arr = np.pad(font_img, ((top_padding, down_padding), (left_padding, right_padding)), 'constant')
+        text_arr = np.zeros(bg_shape)
+        text_arr[top_padding:h+top_padding, left_padding:w+left_padding, :] = font_img
+        # text_arr = np.pad(font_img, ((top_padding, down_padding), (left_padding, right_padding)), 'constant')
         return text_arr
-
-    def get_font_color(self, bg_img):
-        """
-        文字的最大亮度为背景均值的max_ratio倍，如2/3
-        """
-        word_color_max = int(np.mean(bg_img) * self.merge_cfg['max_ratio'])
-        word_color = random.randint(0, word_color_max)
-        return word_color
 
     def random_change_bgcolor(self, bg_img):
         """
@@ -56,6 +53,7 @@ class MergeUtil(object):
         new_bg_img = np.clip(new_bg_img, 50, 255)
         return new_bg_img.astype(np.uint8)
 
+
     def poisson_edit(self, font_img, bg_img):
         """
         泊松编辑，使文字图像（font_img）和背景图像（bg_img）更好的融合
@@ -63,23 +61,23 @@ class MergeUtil(object):
         :param bg_img: 背景
         :return:
         """
+        # 随机调整背景亮度及对比度
+        bg_img = self.random_change_bgcolor(bg_img)
         # 将文字图随机pad到同背景同样大小
         padded_font_img = self.random_pad(font_img, bg_img.shape)
-        # 随机调整背景亮度
-        bg_img = self.random_change_bgcolor(bg_img)
-        # 随机调整文字图亮度
-        font_color = self.get_font_color(bg_img)
-        dark_ratio = (255-font_color) / 255
-        adj_font_img = padded_font_img * dark_ratio
-        # 将文字图反转（pygame_util产生的是反的）
-        reversed_font_img = 255 - adj_font_img
-        # 泊松编辑
-        final_img = blit_images(reversed_font_img, bg_img)
+        # 将文字图反转（pygame_util产生的是反的, 文字是255）
+        reversed_font_img = 255 - padded_font_img
+        # 随机调整文字图对比度(a*X+b, 泊松编辑后文字的显著程度只与a有关，故无须关注b)
+        alpha = get_random_value(*self.merge_cfg['font_alpha'])
+        adj_font_img = reversed_font_img * alpha
+        adj_font_img = adj_font_img.astype(np.uint8)
         # 随机颜色翻转
         if random.random() < self.merge_cfg['reverse']:
-            final_img = 255 - final_img
-            dark_ratio = 1. / dark_ratio
-        merge_str = f'bgc{int(np.mean(bg_img))}_dr{round(dark_ratio,2)}'
+            adj_font_img = padded_font_img * alpha
+            bg_img = np.clip(bg_img, 0, 200)
+        # 泊松编辑
+        final_img = blit_images(adj_font_img, bg_img)
+        merge_str = f'bgc{int(np.mean(bg_img))}_a{round(alpha,2)}'
         return merge_str, final_img
 
     def apply_gauss_noise(self, img):
@@ -115,13 +113,13 @@ class MergeUtil(object):
         # Salt mode
         num_salt = np.ceil(amount * img.size * s_vs_p)
         coords = [np.random.randint(0, i - 1, int(num_salt))
-                  for i in img.shape]
+                  for i in img.shape if i >1]
         out[tuple(coords)] = 255
 
         # Pepper mode
         num_pepper = np.ceil(amount * img.size * (1. - s_vs_p))
         coords = [np.random.randint(0, i - 1, int(num_pepper))
-                  for i in img.shape]
+                  for i in img.shape if i >1]
         out[tuple(coords)] = 0
         return out
 
@@ -141,8 +139,13 @@ class MergeUtil(object):
     def __call__(self, font_img):
         """
         """
+        # process
+        if self.rgb:
+            font_img = cv2.cvtColor(font_img, cv2.COLOR_GRAY2BGR)
+        else:
+            font_img = np.expand_dims(font_img, 2)
         # generate bg
-        bg_name, bg_img =self.bg_factory.getnerate_bg()
+        bg_name, bg_img =self.bg_factory.getnerate_bg(rgb=self.rgb)
         # merge font_img and bg_img
         merge_str, merged_img = self.poisson_edit(font_img, bg_img)
         bg_name += f'_{merge_str}'
@@ -170,7 +173,7 @@ class MergeUtil(object):
 
     def play(self, FPS=5):
         font_img = 255-cv2.imread('./demo_img/font_img_1.jpg', cv2.IMREAD_GRAYSCALE)
-        self.bg_factory = bgFactory('../../data/background')
+        self.bg_factory = bgFactory('../../data/background', )
         while True:
             final_str, final_img = self.__call__(font_img)
             cv2.namedWindow('Play', 0)
@@ -183,9 +186,29 @@ class MergeUtil(object):
             # cv2.imwrite('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/samples/'+final_str+'.jpg', final_img)
         cv2.destroyAllWindows()
 
+    def test_font_bg_color(self, bg_color, dark_ratio):
+        font_img = cv2.imread('./demo_img/font_img_1.jpg', cv2.IMREAD_GRAYSCALE)
+        font_img = np.expand_dims(font_img, 2)
+        adj_font_img = font_img * 0.05
+        adj_font_img = adj_font_img.astype(np.uint8)
+        adj_font_img1 = font_img * 0.05 + 100
+        adj_font_img1 = adj_font_img1.astype(np.uint8)
+        bg_img = np.zeros(font_img.shape).astype(np.uint8) + 50
+        final = blit_images(adj_font_img, bg_img)
+        final2 = blit_images(adj_font_img1, bg_img)
+        cv2.imshow('adj', adj_font_img)
+        cv2.imshow('bg', bg_img)
+        cv2.imshow('final', final)
+        cv2.imshow('final2', final2)
+        key = cv2.waitKey()
+        if key == ord('q'):
+            cv2.destroyAllWindows()
+        return font_img
+
 
 if __name__ == '__main__':
     import yaml
+    import matplotlib
 
     cfg = yaml.load(open('../../configs/base.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
 

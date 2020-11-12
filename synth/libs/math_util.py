@@ -56,7 +56,7 @@ def scaled_gaussian(min_val, max_val):
     return val
 
 def get_random_value(min_val, max_val, random_type):
-    if random_type == 'gaussian':
+    if random_type == 'g':
         return scaled_gaussian(min_val, max_val)
     else:
         return random.uniform(min_val, max_val)

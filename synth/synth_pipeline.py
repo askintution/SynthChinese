@@ -19,7 +19,7 @@ class Pipeline:
 
         self.target_dir = target_dir
         self.img_dir = self._init_img_dir()
-        self.label_file = self.check_filename(os.path.join(target_dir, label_file))
+        self.label_file = open(self.check_filename(os.path.join(target_dir, label_file)), 'w')
         self.label_sep = label_sep
         self.label_cache = ''
 
@@ -27,11 +27,7 @@ class Pipeline:
 
     def __del__(self):
         # save label
-        if self.label_cache:
-            with open(self.label_file, mode='a+') as f:
-                f.write(self.label_cache)
-                f.flush()
-                self.label_cache = ''
+        self.label_file.close()
 
     def _init_img_dir(self):
         times = 1
@@ -66,27 +62,27 @@ class Pipeline:
         # save img
         cv2.imwrite(os.path.join(self.img_dir, f_name), img)
         # save label
-        self.label_cache += f'{self.img_dir_short}/{f_name}{self.label_sep}{text}\n'
-        if len(self.label_cache) > 10000:
-            with open(self.label_file, mode='a+') as f:
-                f.write(self.label_cache)
-                f.flush()
-                self.label_cache = ''
+        label_str = f'{self.img_dir_short}/{f_name}{self.label_sep}{text}\n'
+        self.label_file.write(label_str)
 
     def __call__(self, corpus_generator, corpus_type='C'):
         count = 0
         for text in corpus_generator:
-            count += 1
 
-            font_str, font_img = self.font_util(text)
-            cv_str, cv_img = self.cv_util(font_img)
-            mg_str, mg_img = self.merge_util(cv_img)
+            try:
+                font_str, font_img = self.font_util(text)
+                cv_str, cv_img = self.cv_util(font_img)
+                mg_str, mg_img = self.merge_util(cv_img)
 
-            f_name = f'{corpus_type}{count:0>8}_{font_str}_{cv_str}_{mg_str}.jpg'
-            self.img_save(text, f_name, mg_img)
+                f_name = f'{corpus_type}{count:0>8}_{font_str}_{cv_str}_{mg_str}.jpg'
+                self.img_save(text, f_name, mg_img)
 
-            if count % self.dispaly_interval == 0:
-                logger.info(f'Num: {count:0>8} image has been generated.')
+                count += 1
+
+                if count % self.dispaly_interval == 0:
+                    logger.info(f'Num: {count:0>8} image has been generated.')
+            except:
+                logger.exception('')
 
 
 

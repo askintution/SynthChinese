@@ -94,12 +94,6 @@ def blit_images(im_top,im_back,scale_grad=1.0,mode='max'):
     """
     assert np.all(im_top.shape==im_back.shape)
 
-    # dim
-    dim = len(im_top.shape)
-    if dim == 2:
-        im_top = np.expand_dims(im_top, 2)
-        im_back = np.expand_dims(im_back, 2)
-
     # to float
     im_top = im_top.copy().astype('float32')
     im_back = im_back.copy().astype('float32')
@@ -150,9 +144,6 @@ def blit_images(im_top,im_back,scale_grad=1.0,mode='max'):
 
         im_res[:,:,ch] = np.clip(poisson_solve(gx,gy,imd),0,255)
 
-    if dim == 2:
-        im_res = np.squeeze(im_res)
-
     return im_res.astype('uint8')
 
 
@@ -179,77 +170,9 @@ if __name__=='__main__':
     """
     example usage:
     """
-    import seaborn as sns
 
-    im_src = cv2.imread('i2.jpg').astype('float32')
-
-    im_dst = cv2.imread('gg.jpg').astype('float32')
-
-    mu = np.mean(np.reshape(im_src,[im_src.shape[0]*im_src.shape[1],3]),axis=0)
-    # print mu
-    sz = (700,700)
-    im_src = cv2.resize(im_src,sz)
-    im_dst = cv2.resize(im_dst,sz)
-    
-    im0 = im_dst[:,:,0] > 100
-    im_dst[im0,:] = im_src[im0,:]
-    im_dst[~im0,:] = 50
-    im_dst = cv2.GaussianBlur(im_dst,(5,5),5)
-    
-    im_alpha = 0.8*im_dst + 0.2*im_src
-
-    # plt.imshow(im_dst)
-    # plt.show()
-
-    im_res = blit_images(im_src,im_dst)
-
-    import scipy
-    scipy.misc.imsave('orig.png',im_src[:,:,::-1].astype('uint8'))
-    scipy.misc.imsave('alpha.png',im_alpha[:,:,::-1].astype('uint8'))
-    scipy.misc.imsave('poisson.png',im_res[:,:,::-1].astype('uint8'))
-
-    im_actual_L = cv2.cvtColor(im_src.astype('uint8'),cv2.cv.CV_BGR2Lab)[:,:,0]
-    im_alpha_L = cv2.cvtColor(im_alpha.astype('uint8'),cv2.cv.CV_BGR2Lab)[:,:,0]
-    im_poisson_L = cv2.cvtColor(im_res.astype('uint8'),cv2.cv.CV_BGR2Lab)[:,:,0]
-
-    # plt.imshow(im_alpha_L)
-    # plt.show()
-    for i in xrange(500,im_alpha_L.shape[1],5):
-        l_actual = im_actual_L[i,:]#-im_actual_L[i,:-1]
-        l_alpha = im_alpha_L[i,:]#-im_alpha_L[i,:-1]
-        l_poisson = im_poisson_L[i,:]#-im_poisson_L[i,:-1]
-
-
-        with sns.axes_style("darkgrid"):
-            plt.subplot(2,1,2)
-            plt.plot(l_alpha,label='alpha')
-            plt.hold(True)
-            plt.plot(l_poisson,label='poisson')
-            plt.plot(l_actual,label='actual')
-            plt.legend()
-
-            # find "text regions":
-            is_txt = ~im0[i,:]
-            t_loc = contiguous_regions(is_txt)
-            ax = plt.gca()
-            for b0,b1 in t_loc:
-                ax.axvspan(b0, b1, facecolor='red', alpha=0.1)
-        
-        with sns.axes_style("white"):
-            plt.subplot(2,1,1)
-            plt.imshow(im_alpha[:,:,::-1].astype('uint8'))
-            plt.hold(True)
-            plt.plot([0,im_alpha_L.shape[0]-1],[i,i],'r')
-            plt.axis('image')
-            plt.show()
-
-
-    plt.subplot(1,3,1)
-    plt.imshow(im_src[:,:,::-1].astype('uint8'))
-    plt.subplot(1,3,2)
-    plt.imshow(im_alpha[:,:,::-1].astype('uint8'))
-    plt.subplot(1,3,3)    
-    plt.imshow(im_res[:,:,::-1]) #cv2 reads in BGR
-    plt.show()
-
+    font_img = cv2.imread('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/reversed_font_img.jpg',
+                          cv2.IMREAD_GRAYSCALE)
+    bg_img = cv2.imread('/Users/Desperado/Desktop/工作文件夹/gitcode/SynthChinese/bg_img.jpg', cv2.IMREAD_GRAYSCALE)
+    img = blit_images(font_img, bg_img)
 

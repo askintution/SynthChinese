@@ -1,14 +1,18 @@
 TEXT:
     SAMPLE:
-        SAMPLE_SIZE: {'corpus': 200,'date': 10,'number': 10,'sub_address': 10,'id': 10,'eng_char': 10}  # 数量（万）
-        WORD_LENGTH: [12, 12]   # 字符长度
+        SAMPLE_SIZE: {'corpus': 150,'date': 50,'number': 20,'sub_address': 20,'id': 20,'eng_char': 20}  # 数量（万）
+        WORD_LENGTH: [2, 12]   # 字符长度
+        INSERT_BLANK_PROB: 1     # 当字符长度少于最大长度时用空格补全为最大长度（空格只出现在两字中间）
         CHAR_SET: 'data/chars/chn.txt'        # 字符集文件
-        CHAR_MAX_AMOUNT: 100000   #  字符最大使用次数，达到后停用
-        CHAR_MIN_AMOUNT: 200    # 字符最小使用次数，不足时补充
+        CHAR_MAX_AMOUNT: 50000   #  字符最大使用次数，达到后停用
+        CHAR_MAX_SUBSTR: ' '    # 字符停用后的替换字符
+        CHAR_MIN_AMOUNT: 500    # 字符最小使用次数，不足时补充
+
     CORPUS:
         CORPUS_DIR: 'data/corpus'  # 语料目录
-        CORPUS_TYPE: {'黄金时代.txt': 'article', 'address.txt': 'list'}   # 语料类型，不指定时默认为article
-        CORPUS_WEIGHT: {"黄金时代.txt": 0.6, 'address.txt': 0.4}    # 语料权重，不指定时默认相同
+        CORPUS_TYPE: {'黄金时代.txt': 'article', 'address.txt': 'list'}   # 语料类型，不指定时默认为article。 区别为article类型遇到换行时直接拼接。而list类型语料换行时在行尾添加空格
+        CORPUS_WEIGHT: {"黄金时代.txt": 0.8, 'address.txt': 0.2}    # 语料权重，不指定时默认相同
+        INFINITE: True    # 为True时可以循环使用语料
 
 BACKGROUND:
     DIR: 'data/background'  # 背景目录
@@ -47,32 +51,33 @@ EFFECT:
 
             fonts_strong_false: ['FZSTK.TTF', 'FZYTK.ttf']
         FONT_STYLE:
-            size: [14, 40, 'uniform']  # 字体大小
+            size: [15, 40, 'u']  # 字体大小, [min, max, mode], mode: u for uniform, g for gaussian
             oblique: 0.1  # 倾斜
-            rotation: [0.1, [-5, 5,'uniform']]  # 旋转
+            rotation: [0.1, [-5, 5,'u']]  # 旋转
             strong: 0.1  # 加粗
             wide: 0.01  # 加宽
-            strength: [0, 0.1, 'uniform']  # 加粗/加宽的幅度
-            underline: [0.1, [0, 2, 'uniform']]  # 下划线
+            strength: [0, 0.1, 'u']  # 加粗/加宽的幅度
+            underline: [0.1, [0, 2, 'u']]  # 下划线
 
     OPENCV:
         BOX: 0.1    # 为文字加外边框
         PERSPECTIVE: 0.2  # 透视变换
-        PERSPECTIVE_X: [-25, 25, 'gaussian']   # X轴转动角度
-        PERSPECTIVE_Y: [-25, 25, 'gaussian']   # Y轴转动角度
-        PERSPECTIVE_Z: [-5, 5, 'gaussian']   # Z轴转动角度
+        PERSPECTIVE_X: [-15, 15, 'g']   # X轴转动角度
+        PERSPECTIVE_Y: [-15, 15, 'g']   # Y轴转动角度
+        PERSPECTIVE_Z: [-3, 3, 'g']   # Z轴转动角度
         BLUR: 0.1   # 高斯模糊
         BLUR_KSIZE: [1,3,5]
-        BLUR_SIGMA: [0,1,2,3,4,5,6,7]
-        FILTER: [0.1, [0.8, 0.2]]   # filter_prob, emboss_prob, sharp_prob
+        BLUR_SIGMA: [0, 0.5, 1.5]
+        FILTER: [0.1, [0.9, 0.1]]   # filter_prob, emboss_prob, sharp_prob
 
     MERGE:
-        alpha: [0.7, 1.4, 'gaussian']  # 随机调节背景图片的亮度和对比度(a*f(x)+b),调节因子a
-        beta: [-50, 50, 'gaussian']   # 随机调节背景图片的亮度和对比度(a*f(x)+b),调节因子b
-        max_ratio: 0.67  # 文字相较背景的最大亮度
+        RGB: False   # 是否三通道
+        alpha: [0.5, 1.5, 'g']  # 随机调节背景图片的亮度和对比度(a*f(x)+b),调节因子a
+        beta: [-50, 50, 'g']   # 随机调节背景图片的亮度和对比度(a*f(x)+b),调节因子b
+        font_alpha: [0.4, 1, 'u']  # 文字不透明度
         max_height_diff: 10   # resize时文字图像与背景图最大高度差, 最小值为2
-        reverse: 0.2  # 反转最终图像的颜色
-        NOISE: 0.3   # 随机噪点
+        reverse: 0  # 反转最终图像的颜色
+        NOISE: 0.8   # 随机噪点
         NOISE_TYPE: {'gauss':0.1, 'uniform':0.1, 'saltpepper':0.1, 'poisson':0.1}
 
 

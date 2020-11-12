@@ -15,14 +15,7 @@ def get_corpus(cfg):
     cfg = cfg['TEXT']
     sample_size = cfg['SAMPLE']['SAMPLE_SIZE']
     # corpus
-    corpus_render = BaseRender(cfg['SAMPLE']['CHAR_SET'],
-                               corpus_dir=cfg['CORPUS']['CORPUS_DIR'],
-                               corpus_type_dict=cfg['CORPUS']['CORPUS_TYPE'],
-                               corpus_weight_dict=cfg['CORPUS']['CORPUS_WEIGHT'],
-                               char_max_amount=cfg['SAMPLE']['CHAR_MAX_AMOUNT'],
-                               char_min_amount=cfg['SAMPLE']['CHAR_MIN_AMOUNT'],
-                               length=cfg['SAMPLE']['WORD_LENGTH'],
-                               )
+    corpus_render = BaseRender(cfg['SAMPLE']['CHAR_SET'], cfg)
     date_render = DateRender(cfg['SAMPLE']['CHAR_SET'])
     number_render = NumberRender(cfg['SAMPLE']['CHAR_SET'])
     eng_render = EngRender(cfg['SAMPLE']['CHAR_SET'])
