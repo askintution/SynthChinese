@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 """
 @author zhangjian
+
+some functions refers to: https://github.com/Sanster/text_renderer
 """
 import cv2
 import random
