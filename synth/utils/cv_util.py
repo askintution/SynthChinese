@@ -4,6 +4,7 @@
 """
 import cv2
 import os
+import math
 import random
 import numpy as np
 from synth.libs.math_util import PerspectiveTransform, get_random_value
@@ -30,8 +31,16 @@ class cvUtil(object):
         raw_h, raw_w = img.shape
         transformer = PerspectiveTransform(x, y, z, scale=1.0, fovy=50)
         dst_img, M33, dst_img_pnts = transformer.transform_image(img)
-        x, y, w, h = cv2.boundingRect(dst_img)  # 获取文本边界
-        new_img = dst_img[y:y + h, x:x + w]
+
+        # 获取边界
+        # x, y, w, h = cv2.boundingRect(dst_img)  # 获取文本边界
+        # new_img = dst_img[y:y + h, x:x + w]
+        min_x, min_y = dst_img_pnts.min(axis=0)
+        min_x, min_y = math.floor(min_x), math.floor(min_y)
+        max_x, max_y = dst_img_pnts.max(axis=0)
+        max_x, max_y = math.ceil(max_x), math.ceil(max_y)
+        new_img = dst_img[min_y:max_y, min_x:max_x]
+
         # 尺寸还原，保持长宽比缩放，两边都不超过原尺寸
         new_h, new_w = new_img.shape
         w1, h1 = int(new_w * raw_h / new_h), raw_h
@@ -49,17 +58,16 @@ class cvUtil(object):
         assert alpha >= 1
         h, w = img.shape
         dst_h, dst_w = int(h * alpha), int(w * alpha)
-        top = random.randint(0, dst_h - h)
+        top = random.randint(1, dst_h - h)
         bottom = dst_h - h - top
-        left = random.randint(0, dst_w - w)
+        left = random.randint(1, dst_w - w)
         right = dst_w - w - left
-        img_new = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT,
-                                     value=0)  # top,bottom,left,right
+        img_new = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=0)  # top,bottom,left,right
 
         # draw_box
-        left_top = (random.randint(0, left), random.randint(0, top))
+        left_top = (random.randint(1, left), random.randint(1, top))
         right_bottom = (random.randint(dst_w-right, dst_w), random.randint(dst_h-bottom, dst_h))
-        cv2.rectangle(img_new, left_top, right_bottom, 255, random.randint(1, 2))
+        cv2.rectangle(img_new, left_top, right_bottom, random.randint(50, 255), random.randint(1,2))
         img_new = cv2.resize(img_new, (w, h), interpolation=cv2.INTER_AREA)
         return img_new
 
@@ -161,6 +169,27 @@ class cvUtil(object):
                     new = self.warpPerspectiveTransform(img, x, y, z)
                     cv2.imwrite(f'../../samples/test_blur/x{x}y{y}z{z}.jpg', new)
 
+    def test_warp(self):
+        import math
+        img = cv2.imread('./demo_img/font_img_1.jpg', cv2.IMREAD_GRAYSCALE)
+        transformer = PerspectiveTransform(10, 10, 2, scale=1.0, fovy=50)
+        dst_img, M33, dst_img_pnts = transformer.transform_image(img)
+        print(dst_img_pnts)
+        min_x, min_y = dst_img_pnts.min(axis=0)
+        min_x, min_y = math.floor(min_x), math.floor(min_y)
+        max_x, max_y = dst_img_pnts.max(axis=0)
+        max_x, max_y = math.ceil(max_x), math.ceil(max_y)
+        print(min_y, max_y, min_x, max_x)
+        dst_img2 = dst_img[min_y:max_y, min_x:max_x]
+        cv2.imshow('warp',dst_img)
+        key = cv2.waitKey()
+        if key == ord('q'):
+            cv2.destroyAllWindows()
+        cv2.imshow('target', dst_img2)
+        key = cv2.waitKey()
+        return dst_img, M33, dst_img_pnts
+
+
     def test(self, font_util, test_text, target_dir):
 
         import matplotlib
@@ -210,3 +239,4 @@ if __name__ == '__main__':
     cfg = yaml.load(open('../../configs/base.yaml', encoding='utf-8'), Loader=yaml.FullLoader)
     cv_util = cvUtil(cfg)
     cv_util.play()
+    # a, b, c = cv_util.test_warp()

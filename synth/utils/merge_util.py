@@ -34,8 +34,8 @@ class MergeUtil(object):
             font_img = np.expand_dims(font_img, 2)
         # random pad
         h, w = font_img.shape[:2]
-        top_padding = int(random.uniform(0, bg_shape[0] - h))
-        left_padding = int(random.uniform(0, bg_shape[1] - w))
+        top_padding = int(random.uniform(1, bg_shape[0] - h))
+        left_padding = int(random.uniform(1, bg_shape[1] - w))
         text_arr = np.zeros(bg_shape)
         text_arr[top_padding:h+top_padding, left_padding:w+left_padding, :] = font_img
         # text_arr = np.pad(font_img, ((top_padding, down_padding), (left_padding, right_padding)), 'constant')
@@ -52,7 +52,6 @@ class MergeUtil(object):
         new_bg_img = bg_img * a + b
         new_bg_img = np.clip(new_bg_img, 50, 255)
         return new_bg_img.astype(np.uint8)
-
 
     def poisson_edit(self, font_img, bg_img):
         """

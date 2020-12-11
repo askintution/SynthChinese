@@ -22,14 +22,16 @@ def get_corpus(cfg):
     eng_render = EngRender(cfg['SAMPLE']['CHAR_SET'])
     id_render = IDRender(cfg['SAMPLE']['CHAR_SET'])
     sub_addr_render = SubAddrRender(cfg['SAMPLE']['CHAR_SET'])
+    task_render = TaskRender()
 
     all_renders = OrderedDict()
-    all_renders['corpus'] = corpus_render
-    all_renders['date'] = date_render
-    all_renders['number'] = number_render
-    all_renders['sub_address'] = sub_addr_render
-    all_renders['id'] = id_render
-    all_renders['eng_char'] = eng_render
+    # all_renders['corpus'] = corpus_render
+    # all_renders['date'] = date_render
+    # all_renders['number'] = number_render
+    # all_renders['sub_address'] = sub_addr_render
+    # all_renders['id'] = id_render
+    # all_renders['eng_char'] = eng_render
+    all_renders['task'] = task_render
 
     all_generators = OrderedDict()
     for render_name in all_renders:

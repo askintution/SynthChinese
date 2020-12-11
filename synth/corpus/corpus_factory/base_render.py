@@ -1,3 +1,4 @@
+import re
 import random
 import glob
 import os
@@ -14,6 +15,7 @@ class BaseRender(object):
         -生成完毕后，可根据词频补充不常出现的字符
 
     """
+    STOP_PATERN = re.compile('[\u4e00-\u9fa5]')  # 只对中文字符设置停用
 
     def __init__(self, chars_file, cfg=None):
         """
@@ -28,13 +30,15 @@ class BaseRender(object):
         self.chars = self.load_chars(chars_file)
         self.stastics = dict()
         for c in self.chars:
-            self.stastics[c] = 0
+            if self.STOP_PATERN.match(c):
+                self.stastics[c] = 0
 
         if cfg:
             self.char_max_amount = cfg['SAMPLE']['CHAR_MAX_AMOUNT']
             self.char_max_sub_str = cfg['SAMPLE']['CHAR_MAX_SUBSTR']
             self.char_min_amount = cfg['SAMPLE']['CHAR_MIN_AMOUNT']
             self.length = cfg['SAMPLE']['WORD_LENGTH']
+            self.word_long = cfg['SAMPLE']['WORD_LONG']
             self.insert_blank = cfg['SAMPLE']['INSERT_BLANK_PROB']
 
             self.corpus_dir = cfg['CORPUS']['CORPUS_DIR']
@@ -43,13 +47,15 @@ class BaseRender(object):
             self.infinite = cfg['CORPUS']['INFINITE']
 
             self.load()
+        else:
+            self.length = [1, 12]
 
     def load_chars(self, filepath):
         """
         Load charset file
         """
         if not os.path.exists(filepath):
-            logger.error("Chars file not exists.")
+            logger.error(f"Chars file {filepath} not exists.")
             exit(1)
 
         ret = ' '
@@ -78,18 +84,29 @@ class BaseRender(object):
         with open(corpus_file_name, mode='r') as f:
             cache = f.readline().strip()
             while True:
-                nchar = random.randint(self.length[0], self.length[1])
+                if random.random() < self.word_long:
+                    nchar = self.length[1]
+                else:
+                    nchar = random.randint(self.length[0], self.length[1])
                 words = ""
                 while True:
                     if cache:
                         char = cache[0]
                         cache = cache[1:]
                         if char in self.chars:
-                            if self.stastics[char] < self.char_max_amount:
-                                words += char
-                                self.stastics[char] += 1
+                            if char in self.stastics:
+                                if corpus_type == 'article':
+                                    if self.stastics[char] > self.char_max_amount:
+                                        words += self.char_max_sub_str
+                                    else:
+                                        self.stastics[char] += 1
+                                        words += char
+                                else:
+                                    words += char
                             else:
-                                words += self.char_max_sub_str
+                                words += char
+                        else:
+                            words += self.char_max_sub_str
                         if len(words) == nchar:
                             # randomly insert blank
                             if nchar < self.length[1]:
@@ -186,7 +203,6 @@ class BaseRender(object):
             list_word.insert(position, ' ')
         return ''.join(list_word)
 
-
     def supply_uncommon(self):
         """
         supply uncommon words
@@ -194,12 +210,13 @@ class BaseRender(object):
         words = []
         parag = []
         for c in self.chars:
-            c_amount = self.stastics[c]
-            if c_amount < self.char_min_amount:
-                added_amount = self.char_min_amount - c_amount
-                tmp_list = [c]
-                parag.extend(tmp_list * added_amount)
-                self.stastics[c] = self.char_min_amount
+            if self.STOP_PATERN.match(c):
+                c_amount = self.stastics[c]
+                if c_amount < self.char_min_amount:
+                    added_amount = self.char_min_amount - c_amount
+                    tmp_list = [c]
+                    parag.extend(tmp_list * added_amount)
+                    self.stastics[c] = self.char_min_amount
 
         random.shuffle(parag)
         parag = ''.join(parag)
@@ -243,8 +260,9 @@ class BaseRender(object):
 
 
 if __name__ == '__main__':
-    render = BaseRender('../../data/chars/chn.txt', '../../data/corpus', length=[12, 12])
-    for _ in range(1000):
-        print(render.get_sample())
-
-    books = render.gen_words_from_corpus('../data/corpus/books.txt', 'list')
+    render = BaseRender('../../../data/chars/chn.txt')
+    # for _ in range(1000):
+    #     print(render.get_sample())
+    #
+    # books = render.gen_words_from_corpus('../data/corpus/books.txt', 'list')
+    print(render.randomly_insert_blank('我们'))

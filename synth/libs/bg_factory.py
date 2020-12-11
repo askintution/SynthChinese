@@ -21,7 +21,7 @@ class bgFactory:
         all_imgs = {}
         if os.path.exists(bgs_dir):
             all_files = os.listdir(bgs_dir)
-            pic_files = list(filter(lambda x: os.path.splitext(x)[1] in ['.jpg', '.png'], all_files))
+            pic_files = list(filter(lambda x: os.path.splitext(x)[1] in ['.jpg', '.jpeg', '.png'], all_files))
 
             for fname in pic_files:
                 bg = cv2.imread(os.path.join(bgs_dir, fname))

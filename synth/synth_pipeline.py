@@ -3,6 +3,7 @@
 @author zhangjian
 """
 import os
+import re
 import cv2
 import datetime
 from synth.utils.font_util import FontUtil
@@ -12,7 +13,9 @@ from synth.logger.synth_logger import logger
 
 
 class Pipeline:
-    def __init__(self, cfg, target_dir, label_file, label_sep='\t', display_interval=2000):
+    blank_compress_patern = re.compile(' +')
+
+    def __init__(self, cfg, target_dir, label_file, label_sep='\t', compress_blank=True, display_interval=2000):
         self.font_util = FontUtil(cfg)
         self.cv_util = cvUtil(cfg)
         self.merge_util = MergeUtil(cfg)
@@ -21,7 +24,7 @@ class Pipeline:
         self.img_dir = self._init_img_dir()
         self.label_file = open(self.check_filename(os.path.join(target_dir, label_file)), 'w')
         self.label_sep = label_sep
-        self.label_cache = ''
+        self.comp_blank = compress_blank
 
         self.dispaly_interval = display_interval
 
@@ -58,9 +61,18 @@ class Pipeline:
         else:
             return file_name
 
+    def compress_blank(self, text):
+        compressed_text = self.blank_compress_patern.sub('', text)
+        return compressed_text
+
     def img_save(self, text, f_name, img):
         # save img
         cv2.imwrite(os.path.join(self.img_dir, f_name), img)
+        # compress blanks in label
+        if self.comp_blank:
+            text = self.compress_blank(text)
+        # strip
+        text = text.strip()
         # save label
         label_str = f'{self.img_dir_short}/{f_name}{self.label_sep}{text}\n'
         self.label_file.write(label_str)
